@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script>
+    function openShareOptions() {
+      const shareUrl = "https://example.com"; // Replace with your desired share URL
+
+      const message = `Check out this link: ${shareUrl}`;
+
+      if (navigator.canShare && navigator.canShare({ text: message })) {
+        navigator.canShare({ text: message })
+          .then(canShare => {
+            if (canShare) {
+              navigator.share({
+                text: message
+              })
+              .catch(error => console.error("Error sharing:", error));
+            } else {
+              openFallbackShareOptions(message);
+            }
+          });
+      } else {
+        openFallbackShareOptions(message);
+      }
+    }
+
+    function openFallbackShareOptions(text) {
+      const encodedText = encodeURIComponent(text);
+      const whatsappLink = `https://wa.me/?text=${encodedText}`;
+      const emailLink = `mailto:?body=${encodedText}`;
+
+      const shareOptions = [
+        { label: "WhatsApp", link: whatsappLink },
+        { label: "Inbox", link: "#", onClick: openInbox },
+        { label: "Email", link: emailLink }
+        // Add more share options as needed
+      ];
+
+      let shareMenu = "";
+      shareOptions.forEach(option => {
+        shareMenu += `<li><a href="${option.link}" onclick="${option.onClick || ''}">${option.label}</a></li>`;
+      });
+
+      const menuContainer = document.createElement("div");
+      menuContainer.innerHTML = `
+        <ul>
+          ${shareMenu}
+        </ul>
+      `;
+      document.body.appendChild(menuContainer);
+    }
+
+    function openInbox() {
+      // Implement your inbox functionality here
+      alert("Open inbox functionality goes here.");
+    }
+  </script>
+</head>
+<body onload="openShareOptions()">
+</body>
+</html>
